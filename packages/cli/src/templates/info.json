@@ -1,0 +1,179 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "key": {
+      "type": "string"
+    },
+    "iconUrl": {
+      "type": "string"
+    },
+    "docUrl": {
+      "type": "string"
+    },
+    "primaryColor": {
+      "type": "string"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "null"
+          },
+          "placeholder": {
+            "type": "null"
+          },
+          "description": {
+            "type": "null"
+          },
+          "docUrl": {
+            "type": "string"
+          },
+          "clickToCopy": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "type",
+          "required",
+          "readOnly",
+          "value",
+          "placeholder",
+          "description",
+          "docUrl",
+          "clickToCopy"
+        ]
+      },
+      "additionalItems": false
+    },
+    "authenticationSteps": {
+      "type": "array",
+      "items":  {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "null"
+                  },
+                  "fields": {
+                    "type": "array",
+                    "items": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "value"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "value"
+                        ]
+                      }
+                    ],
+                    "additionalItems": false
+                  }
+                },
+                "required": [
+                  "name",
+                  "value",
+                  "fields"
+                ]
+              }
+            ],
+            "additionalItems": false
+          }
+        },
+        "required": [
+          "step",
+          "type",
+          "name",
+          "fields"
+        ]
+      },
+      "additionalItems": false
+    }
+  },
+  "required": [
+    "name",
+    "key",
+    "iconUrl",
+    "docUrl",
+    "primaryColor",
+    "fields",
+    "authenticationSteps",
+    "reconnectionSteps"
+  ]
+}

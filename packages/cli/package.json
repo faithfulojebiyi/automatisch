@@ -32,5 +32,13 @@
   },
   "devDependencies": {
     "eslint": "8.7.0"
+  },
+  "dependencies": {
+    "commander": "8.3.0",
+    "enquirer": "2.3.6",
+    "shelljs": "0.8.4"
+  },
+  "resolutions": {
+    "commander": "8.3.0"
   }
 }
