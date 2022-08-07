@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -16,11 +16,11 @@ import { UPDATE_FLOW_STATUS } from 'graphql/mutations/update-flow-status';
 import { UPDATE_FLOW } from 'graphql/mutations/update-flow';
 import { GET_FLOW } from 'graphql/queries/get-flow';
 import type { IFlow } from '@automatisch/types';
-import * as URLS from 'config/urls';
 
 export default function EditorLayout(): React.ReactElement {
   const { flowId } = useParams();
   const formatMessage = useFormatMessage();
+  const navigate = useNavigate();
   const [updateFlow] = useMutation(UPDATE_FLOW);
   const [updateFlowStatus] = useMutation(UPDATE_FLOW_STATUS);
   const { data, loading } = useQuery(GET_FLOW, { variables: { id: flowId }});
@@ -71,8 +71,7 @@ export default function EditorLayout(): React.ReactElement {
           <Box display="flex" flex={1} alignItems="center">
             <IconButton
               size="small"
-              component={Link}
-              to={URLS.FLOWS}
+              onClick={() => navigate(-1)}
             >
               <ArrowBackIosNewIcon fontSize="small" />
             </IconButton>
