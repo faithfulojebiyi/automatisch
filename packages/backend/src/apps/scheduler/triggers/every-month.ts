@@ -20,7 +20,8 @@ export default class EveryMonth implements ITrigger {
     return cronTimes.everyMonthOnAndAt(this.day, this.hour);
   }
 
-  async run(startDateTime: Date) {
+  async run() {
+    const startDateTime = new Date(Date.now());
     const dateTime = DateTime.fromJSDate(startDateTime);
     const dateTimeObjectRepresentation = getDateTimeObjectRepresentation(dateTime) as IJSONValue;
 

@@ -1,16 +1,54 @@
 import { Worker } from 'bullmq';
+
+import executionQueue from '../queues/execution';
 import Processor from '../services/processor';
 import redisConfig from '../config/redis';
 import Flow from '../models/flow';
+import Execution from '../models/execution';
 import logger from '../helpers/logger';
 
 export const worker = new Worker(
-  'processor',
+  'flow',
   async (job) => {
     const flow = await Flow.query().findById(job.data.flowId).throwIfNotFound();
-    const data = await new Processor(flow, { testRun: false }).run();
+    const steps = await flow
+      .$relatedQuery('steps')
+      .withGraphFetched('connection');
+    const [triggerStep, ...actionSteps] = steps;
+    const processor = new Processor(flow, { testRun: false });
+    const initialTriggerData = await processor.getInitialTriggerData(triggerStep);
 
-    return data;
+    for (const triggerData of initialTriggerData) {
+      const execution = await Execution.query().insert({
+        flowId: flow.id,
+        testRun: false,
+        internalId: triggerData.id,
+      });
+
+      const triggerExecutionStep = await execution
+        .$relatedQuery('executionSteps')
+        .insertAndFetch({
+          stepId: triggerStep.id,
+          status: 'success',
+          dataIn: triggerStep.parameters,
+          dataOut: triggerData,
+        });
+
+      const [firstAction, ...nextActions] = actionSteps;
+      const firstExecutionStepJobName = firstAction.id;
+      const firstExecutionStepJobPayload = {
+        flow: flow,
+        step: firstAction,
+        execution,
+        executionSteps: {
+          [triggerStep.id]: triggerExecutionStep
+        },
+        nextSteps: nextActions,
+      };
+      await executionQueue.add(firstExecutionStepJobName, firstExecutionStepJobPayload);
+    }
+
+    return true;
   },
   { connection: redisConfig }
 );

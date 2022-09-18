@@ -9,8 +9,8 @@ const redisConnection = {
   connection: redisConfig,
 };
 
-const processorQueue = new Queue('flow', redisConnection);
-const queueScheduler = new QueueScheduler('flow', redisConnection);
+const processorQueue = new Queue('trigger', redisConnection);
+const queueScheduler = new QueueScheduler('trigger', redisConnection);
 
 process.on('SIGTERM', async () => {
   await queueScheduler.close();

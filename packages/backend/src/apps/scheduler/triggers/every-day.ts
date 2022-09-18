@@ -24,7 +24,8 @@ export default class EveryDay implements ITrigger {
     return cronTimes.everyDayExcludingWeekendsAt(this.hour);
   }
 
-  async run(startDateTime: Date) {
+  async run() {
+    const startDateTime = new Date(Date.now());
     const dateTime = DateTime.fromJSDate(startDateTime);
     const dateTimeObjectRepresentation = getDateTimeObjectRepresentation(dateTime) as IJSONValue;
 

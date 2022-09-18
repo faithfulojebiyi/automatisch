@@ -30,9 +30,8 @@ export default class SearchTweets {
 
       const queryParams = qs.stringify(omitBy(params, isEmpty));
 
-      const requestPath = `/2/tweets/search/recent${
-        queryParams.toString() ? `?${queryParams.toString()}` : ''
-      }`;
+      const requestPath = `/2/tweets/search/recent${queryParams.toString() ? `?${queryParams.toString()}` : ''
+        }`;
 
       const requestData = {
         url: `${TwitterClient.baseUrl}${requestPath}`,
