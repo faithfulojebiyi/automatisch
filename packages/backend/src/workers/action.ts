@@ -1,12 +1,12 @@
 import { Worker, Job } from 'bullmq';
 
 import ExecutionStep from '../models/execution-step';
-import executionQueue from '../queues/execution';
+import executionQueue from '../queues/action';
 import Processor from '../services/processor';
 import redisConfig from '../config/redis';
 import logger from '../helpers/logger';
 
-export const worker = new Worker(
+export const actionWorker = new Worker(
   'action',
   async (job) => {
     const { data } = job;
@@ -45,7 +45,7 @@ export const worker = new Worker(
   { connection: redisConfig }
 );
 
-worker.on('completed', async (job, returnValue: any) => {
+actionWorker.on('completed', async (job, returnValue: any) => {
   logger.info(`JOB ID: ${job.id} - FLOW ID: ${job.data.flowId} has completed!`);
   const { flow, execution, step, executionSteps, nextSteps } = returnValue;
 
@@ -74,7 +74,7 @@ worker.on('completed', async (job, returnValue: any) => {
   }
 });
 
-worker.on('failed', async (job, err) => {
+actionWorker.on('failed', async (job, err) => {
   logger.info(
     `JOB ID: ${job.id} - FLOW ID: ${job.data.flowId} has failed with ${err.message}`
   );
@@ -91,5 +91,5 @@ worker.on('failed', async (job, err) => {
 });
 
 process.on('SIGTERM', async () => {
-  await worker.close();
+  await actionWorker.close();
 });

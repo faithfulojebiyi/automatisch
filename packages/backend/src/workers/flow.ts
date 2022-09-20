@@ -1,22 +1,25 @@
 import { Worker } from 'bullmq';
 
-import executionQueue from '../queues/execution';
+import executionQueue from '../queues/action';
 import Processor from '../services/processor';
 import redisConfig from '../config/redis';
 import Flow from '../models/flow';
 import Execution from '../models/execution';
 import logger from '../helpers/logger';
 
-export const worker = new Worker(
+export const flowWorker = new Worker(
   'flow',
   async (job) => {
     const flow = await Flow.query().findById(job.data.flowId).throwIfNotFound();
+
     const steps = await flow
       .$relatedQuery('steps')
       .withGraphFetched('connection');
     const [triggerStep, ...actionSteps] = steps;
     const processor = new Processor(flow, { testRun: false });
-    const initialTriggerData = await processor.getInitialTriggerData(triggerStep);
+    const initialTriggerData = await processor.getInitialTriggerData(
+      triggerStep
+    );
 
     for (const triggerData of initialTriggerData) {
       const execution = await Execution.query().insert({
@@ -41,11 +44,14 @@ export const worker = new Worker(
         step: firstAction,
         execution,
         executionSteps: {
-          [triggerStep.id]: triggerExecutionStep
+          [triggerStep.id]: triggerExecutionStep,
         },
         nextSteps: nextActions,
       };
-      await executionQueue.add(firstExecutionStepJobName, firstExecutionStepJobPayload);
+      await executionQueue.add(
+        firstExecutionStepJobName,
+        firstExecutionStepJobPayload
+      );
     }
 
     return true;
@@ -53,16 +59,16 @@ export const worker = new Worker(
   { connection: redisConfig }
 );
 
-worker.on('completed', (job) => {
+flowWorker.on('completed', (job) => {
   logger.info(`JOB ID: ${job.id} - FLOW ID: ${job.data.flowId} has completed!`);
 });
 
-worker.on('failed', (job, err) => {
+flowWorker.on('failed', (job, err) => {
   logger.info(
     `JOB ID: ${job.id} - FLOW ID: ${job.data.flowId} has failed with ${err.message}`
   );
 });
 
 process.on('SIGTERM', async () => {
-  await worker.close();
+  await flowWorker.close();
 });
