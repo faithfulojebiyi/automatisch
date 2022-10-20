@@ -22,3 +22,17 @@ export const processFlow = async (options: ProcessFlowOptions) => {
 
   return await triggerCommand.run($);
 };
+
+
+
+// function() {
+//   try {
+//     await triggerCommand.run($);
+//   } catch(error) {
+//     // error is the same with $.output.error
+
+//     $.output.data // to process whatever has been fetched
+
+//     error // to process the error
+//   }
+// }

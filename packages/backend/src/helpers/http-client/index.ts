@@ -40,7 +40,8 @@ export default function createHttpClient({
     (response) => response,
     (error) => {
       error.response.integrationError = error.response.data;
-      return error.response;
+      $.output.error = error.response.data;
+      throw error.response;
     }
   );
 

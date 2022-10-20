@@ -24,16 +24,15 @@ const fetchTweets = async ($: IGlobalVariable) => {
 
     const queryParams = qs.stringify(omitBy(params, isEmpty));
 
-    const requestPath = `/2/tweets/search/recent${
-      queryParams.toString() ? `?${queryParams.toString()}` : ''
-    }`;
+    const requestPath = `/2/tweets/search/recent${queryParams.toString() ? `?${queryParams.toString()}` : ''
+      }`;
 
     response = await $.http.get(requestPath);
 
-    if (response.integrationError) {
-      tweets.error = response.integrationError;
-      return tweets;
-    }
+    // if (response.integrationError) {
+    //   tweets.error = response.integrationError;
+    //   return tweets;
+    // }
 
     if (response.data.errors) {
       tweets.error = response.data.errors;
@@ -49,12 +48,13 @@ const fetchTweets = async ($: IGlobalVariable) => {
           },
         };
 
-        tweets.data.push(dataItem);
+        $.pushOutputItem(dataItem);
+        // tweets.data.push(dataItem);
       });
     }
   } while (response.data.meta.next_token && !$.execution.testRun);
 
-  return tweets;
+  return;
 };
 
 const searchTweets = async ($: IGlobalVariable) => {

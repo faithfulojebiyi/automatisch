@@ -59,7 +59,15 @@ const globalVariable = async (
       id: execution?.id,
       testRun,
     },
+    output: {
+      data: [],
+      error: null,
+    },
   };
+
+  $.pushOutputItem = (object) => {
+    $.output.data.push(object);
+  }
 
   $.http = createHttpClient({
     $,
